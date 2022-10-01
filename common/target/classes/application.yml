@@ -1,0 +1,5 @@
+spring:
+  redis:
+    database: 1 # 使用1号库
+    host: 106.12.108.72
+    port: 6379

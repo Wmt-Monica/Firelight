@@ -1,0 +1,28 @@
+server:
+  port: 33667
+spring:
+  application:
+    name: my-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          lowerCaseServiceId: true
+      routes:
+        - id: Ucenter
+          uri: lb://my-u-center
+          predicates:
+            - Path=/uc/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+        - id: Firelight
+          uri: lb://mo-yu-jun
+          predicates:
+            - Path=/my/**
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+    nacos:
+      discovery:
+        server-addr: 106.12.108.72:8848
