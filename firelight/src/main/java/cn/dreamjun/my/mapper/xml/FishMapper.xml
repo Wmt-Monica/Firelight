@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dreamjun.my.mapper.FishMapper">
+    <resultMap id="fishVoMap" type="cn.dreamjun.my.vo.FishVo">
+        <result typeHandler="cn.dreamjun.my.config.ImagesTypeHandler"
+                property="images"
+                column="images"/>
+    </resultMap>
+    <select id="listFish" resultMap="fishVoMap">
+        SELECT mf.*,mt.`name` as topicName ,uu.`avatar`,uu.`user_name`,uui.`company`,uui.`position`,uui.`good_at`
+        FROM firelight_user_content.`my_fish` mf
+        LEFT JOIN firelight_user_content.`my_topic` mt ON mf.`topic_id` = mt.`id`
+        LEFT JOIN firelight_user_center.`uc_user` uu ON mf.`user_id` = uu.`id`
+        LEFT JOIN firelight_user_center.`uc_user_info` uui ON mf.`user_id` = uui.`user_id`
+        <where>
+            1=1
+            <if test="topicId!=''and topicId!=null">
+                and mf.`topic_id` = #{topicId}
+            </if>
+            and mf.`deleted` = '0'
+        </where>
+        order by mf.`create_time` desc
+        limit #{offset},#{size}
+    </select>
+    <select id="listFollowFish" resultMap="fishVoMap">
+        SELECT mf.*,mt.`name` as topicName ,uu.`avatar`,uu.`user_name`,uui.`company`,uui.`position`,uui.`good_at`
+        FROM firelight_user_content.`my_fish` mf
+        LEFT JOIN firelight_user_content.`my_topic` mt ON mf.`topic_id` = mt.`id`
+        LEFT JOIN firelight_user_center.`uc_user` uu ON mf.`user_id` = uu.`id`
+        LEFT JOIN firelight_user_center.`uc_user_info` uui ON mf.`user_id` = uui.`user_id`
+        <where>
+            1=1
+            <if test="userId!='' and userId!= null and topicId ='follow'">
+                AND mf.`topic_id` IN (
+                SELECT `topic_id`
+                FROM firelight_user_content.`my_topic_follow`
+                WHERE `user_id` = #{userId}
+                )
+            </if>
+            and mf.`deleted` = '0'
+        </where>
+        order by mf.`create_time` desc
+        limit #{offset},#{size}
+    </select>
+    <select id="listFishCount" resultType="java.lang.Long">
+        SELECT count(mf.`id`)
+        FROM firelight_user_content.`my_fish` mf
+        <where>
+            1=1
+            <if test="topicId!=''and topicId!=null">
+                and mf.`topic_id` = #{topicId}
+            </if>
+            and mf.`deleted` = '0'
+        </where>
+    </select>
+    <select id="getFishById" resultMap="fishVoMap">
+        SELECT mf.*,mt.`name` as topicName ,uu.`avatar`,uu.`user_name`,uui.`company`,uui.`position`,uui.`good_at`
+        FROM firelight_user_content.`my_fish` mf
+        LEFT JOIN firelight_user_content.`my_topic` mt ON mf.`topic_id` = mt.`id`
+        LEFT JOIN firelight_user_center.`uc_user` uu ON mf.`user_id` = uu.`id`
+        LEFT JOIN firelight_user_center.`uc_user_info` uui ON mf.`user_id` = uui.`user_id`
+        <where>
+            1=1
+            <if test="fishId!=''and fishId!=null">
+                and mf.`id` = #{fishId}
+            </if>
+            and mf.`deleted` = '0'
+        </where>
+    </select>
+    <select id="listHotFish" resultMap="fishVoMap">
+        <![CDATA[
+                SELECT mf.*,mt.`name` as topicName ,uu.`avatar`,uu.`user_name`,uui.`company`,uui.`position`,uui.`good_at`
+                FROM `my_fish` mf
+                LEFT JOIN firelight_user_content.`my_topic` mt ON mf.`topic_id` = mt.`id`
+                LEFT JOIN firelight_user_center.`uc_user` uu ON mf.`user_id` = uu.`id`
+                LEFT JOIN firelight_user_center.`uc_user_info` uui ON mf.`user_id` = uui.`user_id`
+                WHERE mf.`create_time` >= DATE_SUB(NOW(),INTERVAL 7 DAY)
+                ORDER BY mf.`comment_count` DESC
+                LIMIT #{offset},#{count}
+        ]]>
+    </select>
+    <select id="listRecommendFish" resultMap="fishVoMap">
+         <![CDATA[
+                SELECT mf.*,mt.`name` as topicName ,uu.`avatar`,uu.`user_name`,uui.`company`,uui.`position`,uui.`good_at`
+                FROM `my_fish` mf
+                LEFT JOIN firelight_user_content.`my_topic` mt ON mf.`topic_id` = mt.`id`
+                LEFT JOIN firelight_user_center.`uc_user` uu ON mf.`user_id` = uu.`id`
+                LEFT JOIN firelight_user_center.`uc_user_info` uui ON mf.`user_id` = uui.`user_id`
+                WHERE mf.`create_time` >= DATE_SUB(NOW(),INTERVAL 100 DAY)
+                ORDER BY mf.`thumb_up_count` DESC
+                LIMIT #{offset},#{size}
+        ]]>
+    </select>
+    <select id="in30DayCount" resultType="java.lang.Long">
+         <![CDATA[
+                SELECT count(mf.`id`)
+                FROM `my_fish` mf
+                WHERE mf.`create_time` >= DATE_SUB(NOW(),INTERVAL 100 DAY)
+        ]]>
+    </select>
+    <select id="listFollowCount" resultType="java.lang.Long">
+        SELECT count(mf.`id`)
+        FROM firelight_user_content.`my_fish` mf
+        <where>
+            1=1
+            <if test="userId!='' and userId!= null and topicId ='follow'">
+                AND mf.`topic_id` IN (
+                SELECT `topic_id`
+                FROM firelight_user_content.`my_topic_follow`
+                WHERE `user_id` = #{userId}
+                )
+            </if>
+            and mf.`deleted` = '0'
+        </where>
+    </select>
+</mapper>

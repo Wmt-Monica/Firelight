@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dreamjun.my.mapper.CommentMapper">
+    <select id="listComments" resultType="cn.dreamjun.my.vo.CommentVo">
+        SELECT myc_mc.*, myu_uu.`avatar`,myu_uu.`user_name` FROM `firelight_user_content`.`my_comment` myc_mc
+        LEFT JOIN `firelight_user_center`.`uc_user` myu_uu ON myc_mc.`user_id` = myu_uu.`id`
+        <where>
+            myc_mc.`my_id` = #{myId}
+        </where>
+        <if test="sort==0">
+            ORDER BY myc_mc.`create_time` ASC
+        </if>
+        <if test="sort==1">
+            ORDER BY myc_mc.`thumb_up_count` DESC
+        </if>
+        LIMIT #{offset},#{size}
+    </select>
+    <select id="listCommentsTotalCount" resultType="java.lang.Long">
+        SELECT count(myc_mc.`id`) FROM `firelight_user_content`.`my_comment` myc_mc
+        <where>
+            myc_mc.`my_id` = #{myId}
+        </where>
+    </select>
+    <select id="listAdminComments" resultType="cn.dreamjun.my.vo.CommentVo">
+        SELECT myc_mc.*, myu_uu.`avatar`,myu_uu.`user_name`
+        FROM `firelight_user_content`.`my_comment` myc_mc
+        LEFT JOIN `firelight_user_center`.`uc_user` myu_uu ON myc_mc.`user_id` = myu_uu.`id`
+        <where>
+            1=1
+            <if test="myId!=null and myId!=''">
+                and myc_mc.`my_id` = #{myId}
+            </if>
+            <if test="id!=null and id!=''">
+                and myc_mc.`id` = #{id}
+            </if>
+            <if test="keyword!=null and keyword!=''">
+                and myc_mc.`content` like #{keyword}
+            </if>
+            <if test="userId!=null and userId!=''">
+                and myc_mc.`user_id` = #{userId}
+            </if>
+        </where>
+        order by myc_mc.`create_time` desc
+        LIMIT #{offset},#{size}
+    </select>
+    <select id="listAdminCommentCount" resultType="java.lang.Long">
+        SELECT count(myc_mc.`id`)
+        FROM `firelight_user_content`.`my_comment` myc_mc
+        <where>
+            1=1
+            <if test="myId!=null and myId!=''">
+                and myc_mc.`my_id` = #{myId}
+            </if>
+            <if test="id!=null and id!=''">
+                and myc_mc.`id` = #{id}
+            </if>
+            <if test="keyword!=null and keyword!=''">
+                and myc_mc.`content` like #{keyword}
+            </if>
+            <if test="userId!=null and userId!=''">
+                and myc_mc.`user_id` = #{userId}
+            </if>
+        </where>
+    </select>
+</mapper>

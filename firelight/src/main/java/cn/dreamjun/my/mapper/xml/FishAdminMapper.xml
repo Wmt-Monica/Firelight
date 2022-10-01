@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dreamjun.my.mapper.FishAdminMapper">
+
+    <select id="listFishes" resultType="cn.dreamjun.my.vo.FishVo">
+        SELECT mf.*,mt.`name` as topicName ,uu.`avatar`,uu.`user_name`
+        FROM firelight_user_content.`my_fish` mf
+        LEFT JOIN firelight_user_content.`my_topic` mt ON mf.`topic_id` = mt.`id`
+        LEFT JOIN firelight_user_center.`uc_user` uu ON mf.`user_id` = uu.`id`
+        <where>
+            1=1
+            <if test="topicId!=''and topicId!=null">
+                and mf.`topic_id` = #{topicId}
+            </if>
+            <if test="userId!=''and userId!=null">
+                and mf.`user_id` = #{userId}
+            </if>
+            <if test="fishId!=''and fishId!=null">
+                and mf.`id` = #{fishId}
+            </if>
+            <if test="title!=''and title!=null">
+                and mf.`content` like #{title}
+            </if>
+            and mf.`deleted` = '0'
+        </where>
+        order by mf.`create_time` desc
+        limit #{offset},#{size}
+    </select>
+    <select id="listFishCount" resultType="java.lang.Long">
+        SELECT count(mf.`id`)
+        FROM firelight_user_content.`my_fish` mf
+        <where>
+            1=1
+            <if test="topicId!=''and topicId!=null">
+                and mf.`topic_id` = #{topicId}
+            </if>
+            <if test="userId!=''and userId!=null">
+                and mf.`user_id` = #{userId}
+            </if>
+            <if test="fishId!=''and fishId!=null">
+                and mf.`id` = #{fishId}
+            </if>
+            <if test="title!=''and title!=null">
+                and mf.`content` like #{title}
+            </if>
+            and mf.`deleted` = '0'
+        </where>
+    </select>
+</mapper>

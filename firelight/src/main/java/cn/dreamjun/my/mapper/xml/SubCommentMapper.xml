@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dreamjun.my.mapper.SubCommentMapper">
+    <select id="listSubCommentByMyId" resultType="cn.dreamjun.my.vo.SubCommentVo">
+        SELECT myc_msc.*, myu_uu_1.`avatar`,myu_uu_1.`user_name`,myu_uu_2.`avatar` AS targetAvatar,myu_uu_2.`user_name` AS targetUserName ,myu_uui.`position`,myu_uui.`company`
+        FROM `firelight_user_content`.`my_sub_comment` myc_msc
+        LEFT JOIN `firelight_user_center`.`uc_user` myu_uu_1 ON myc_msc.`user_id` = myu_uu_1.`id`
+        LEFT JOIN `firelight_user_center`.`uc_user` myu_uu_2 ON myc_msc.`target_user_id` = myu_uu_2.`id`
+        LEFT JOIN `firelight_user_center`.`uc_user_info` myu_uui ON myc_msc.`user_id` = myu_uui.`user_id`
+        where myc_msc.`my_id` = #{myId}
+        ORDER BY myc_msc.`create_time`
+    </select>
+    <select id="listSubCommentByCommentId" resultType="cn.dreamjun.my.vo.SubCommentVo">
+        SELECT myc_msc.*, myu_uu_1.`avatar`,myu_uu_1.`user_name`,myu_uu_2.`avatar` AS targetAvatar,myu_uu_2.`user_name` AS targetUserName ,myu_uui.`position`,myu_uui.`company`
+        FROM `firelight_user_content`.`my_sub_comment` myc_msc
+        LEFT JOIN `firelight_user_center`.`uc_user` myu_uu_1 ON myc_msc.`user_id` = myu_uu_1.`id`
+        LEFT JOIN `firelight_user_center`.`uc_user` myu_uu_2 ON myc_msc.`target_user_id` = myu_uu_2.`id`
+        LEFT JOIN `firelight_user_center`.`uc_user_info` myu_uui ON myc_msc.`user_id` = myu_uui.`user_id`
+        where myc_msc.`comment_id` = #{commentId}
+    </select>
+</mapper>

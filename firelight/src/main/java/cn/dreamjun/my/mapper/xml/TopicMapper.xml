@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.dreamjun.my.mapper.TopicMapper">
+    <select id="listMyFollowTopics" resultType="cn.dreamjun.my.pojo.Topic">
+        SELECT mt.* FROM `my_topic_follow` mtf
+        LEFT JOIN `my_topic` mt ON mtf.`topic_id` = mt.`id`
+        WHERE mtf.`user_id` = #{userId}
+    </select>
+    <select id="listSimpleTopicLimitCount" resultType="cn.dreamjun.my.pojo.Topic">
+        SELECT mt.`name`,mt.`id` FROM `my_topic` mt ORDER BY `order` DESC LIMIT #{count};
+    </select>
+    <select id="listMyUnFollowTopics" resultType="cn.dreamjun.my.pojo.Topic">
+        SELECT * FROM `my_topic` mt
+        WHERE mt.`id` NOT IN (
+        SELECT mtf.`topic_id` FROM `my_topic_follow` mtf WHERE mtf.`user_id` = #{userId}
+        )
+        limit #{count}
+    </select>
+</mapper>
